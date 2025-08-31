@@ -1,21 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { useAuth } from '@/hooks/useAuth';
-import { logoutUserDirect } from '@/lib/firebase-auth-direct';
-import { 
-  getSavingsDirect, 
-  getExpensesDirect, 
-  deleteSavingDirect, 
+import {
+  Expense,
+  Saving,
   deleteExpenseDirect,
-  Saving, 
-  Expense 
+  deleteSavingDirect,
+  getExpensesDirect,
+  getSavingsDirect
 } from '@/lib/firebase-firestore-direct';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function Dashboard() {
+import Link from 'next/link';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { logoutUserDirect } from '@/lib/firebase-auth-direct';
+import { useAuth } from '@/hooks/useAuth';
+
+function DashboardContent() {
   const { user, userData } = useAuth();
   const [savings, setSavings] = useState<Saving[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -561,5 +562,13 @@ export default function Dashboard() {
         </main>
       </div>
     </ProtectedRoute>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 } 

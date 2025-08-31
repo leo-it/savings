@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createSavingDirect } from '@/lib/firebase-firestore-direct';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { createSavingDirect } from '@/lib/firebase-firestore-direct';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function NewSaving() {
   const [formData, setFormData] = useState({
@@ -49,9 +49,9 @@ export default function NewSaving() {
 
       // Redirigir al dashboard con mensaje de éxito
       router.push('/dashboard?tab=savings&message=Ahorro creado exitosamente');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error creando ahorro:', error);
-      setError(error.message || 'Error al crear el ahorro');
+      setError((error as Error).message || 'Error al crear el ahorro');
     } finally {
       setIsLoading(false);
     }

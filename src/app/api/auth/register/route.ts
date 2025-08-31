@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { registerUser } from '@/lib/firebase-auth';
 
 export async function POST(request: NextRequest) {
@@ -28,17 +29,20 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error en registro:', error);
     
     // Manejar errores específicos de Firebase
     let errorMessage = 'Error interno del servidor';
-    if (error.message.includes('auth/email-already-in-use')) {
-      errorMessage = 'El email ya está registrado';
-    } else if (error.message.includes('auth/weak-password')) {
-      errorMessage = 'La contraseña es demasiado débil';
-    } else if (error.message.includes('auth/invalid-email')) {
-      errorMessage = 'El email no es válido';
+    
+    if (error instanceof Error) {
+      if (error.message.includes('auth/email-already-in-use')) {
+        errorMessage = 'El email ya está registrado';
+      } else if (error.message.includes('auth/weak-password')) {
+        errorMessage = 'La contraseña es demasiado débil';
+      } else if (error.message.includes('auth/invalid-email')) {
+        errorMessage = 'El email no es válido';
+      }
     }
 
     return NextResponse.json(

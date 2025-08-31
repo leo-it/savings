@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createExpenseDirect } from '@/lib/firebase-firestore-direct';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { createExpenseDirect } from '@/lib/firebase-firestore-direct';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function NewExpense() {
   const [formData, setFormData] = useState({
@@ -51,9 +51,9 @@ export default function NewExpense() {
 
       // Redirigir al dashboard con mensaje de éxito
       router.push('/dashboard?tab=expenses&message=Gasto registrado exitosamente');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error creando gasto:', error);
-      setError(error.message || 'Error al registrar el gasto');
+      setError((error as Error).message || 'Error al registrar el gasto');
     } finally {
       setIsLoading(false);
     }

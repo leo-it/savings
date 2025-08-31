@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { Saving, getSavingsDirect, updateSavingDirect } from '@/lib/firebase-firestore-direct';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+
 import Link from 'next/link';
-import { getSavingsDirect, updateSavingDirect, Saving } from '@/lib/firebase-firestore-direct';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function EditSaving() {
@@ -46,8 +47,8 @@ export default function EditSaving() {
         description: currentSaving.description || '',
         date: new Date(currentSaving.date).toISOString().split('T')[0]
       });
-    } catch (error: any) {
-      setError(`Error cargando ahorro: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Error cargando ahorro: ${error instanceof Error ? error.message : 'Desconocido'}`);
     } finally {
       setIsLoading(false);
     }
@@ -83,9 +84,9 @@ export default function EditSaving() {
 
       // Redirigir al dashboard con mensaje de éxito
       router.push('/dashboard?tab=savings&message=Ahorro actualizado exitosamente');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error actualizando ahorro:', error);
-      setError(error.message || 'Error al actualizar el ahorro');
+      setError(error instanceof Error ? error.message : 'Error al actualizar el ahorro');
     } finally {
       setIsSaving(false);
     }

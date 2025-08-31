@@ -40,8 +40,9 @@ export async function registerUser(name: string, email: string, password: string
       id: user.uid,
       ...userData
     };
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(errorMessage);
   }
 }
 
@@ -50,8 +51,9 @@ export async function loginUser(email: string, password: string): Promise<User> 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(errorMessage);
   }
 }
 
@@ -59,8 +61,9 @@ export async function loginUser(email: string, password: string): Promise<User> 
 export async function logoutUser(): Promise<void> {
   try {
     await signOut(auth);
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(errorMessage);
   }
 }
 
@@ -75,7 +78,8 @@ export async function getUserData(userId: string): Promise<UserData | null> {
       } as UserData;
     }
     return null;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(errorMessage);
   }
 } 

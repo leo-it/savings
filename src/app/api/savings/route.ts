@@ -1,25 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from 'firebase-admin';
-import { getAuth } from 'firebase-admin/auth';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { createSaving, getSavings } from '@/lib/firebase-firestore';
 
-// Inicializar Firebase Admin si no está inicializado
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId: "savings-app-widget",
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
+// Verificar si las credenciales de Firebase Admin están disponibles
+const hasFirebaseAdminCredentials = process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY;
+
+// Solo importar Firebase Admin si las credenciales están disponibles
+let adminAuth: any = null;
+let createSaving: any = null;
+let getSavings: any = null;
+
+if (hasFirebaseAdminCredentials) {
+  try {
+    const { getAuth } = require('firebase-admin/auth');
+    const { initializeApp, getApps, cert } = require('firebase-admin/app');
+    const firestoreFunctions = require('@/lib/firebase-firestore');
+    
+    // Inicializar Firebase Admin si no está inicializado
+    if (!getApps().length) {
+      initializeApp({
+        credential: cert({
+          projectId: "savings-app-widget",
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        }),
+      });
+    }
+
+    adminAuth = getAuth();
+    createSaving = firestoreFunctions.createSaving;
+    getSavings = firestoreFunctions.getSavings;
+  } catch (error) {
+    console.warn('Firebase Admin no disponible:', error);
+  }
 }
-
-const adminAuth = getAuth();
 
 // Función para verificar token de Firebase
 async function verifyFirebaseToken(authHeader: string | null) {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!adminAuth || !authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
   }
 
@@ -35,6 +51,13 @@ async function verifyFirebaseToken(authHeader: string | null) {
 
 // GET - Obtener ahorros del usuario
 export async function GET(request: NextRequest) {
+  if (!hasFirebaseAdminCredentials) {
+    return NextResponse.json(
+      { error: 'Firebase Admin no configurado' },
+      { status: 503 }
+    );
+  }
+
   try {
     const authHeader = request.headers.get('authorization');
     const decoded = await verifyFirebaseToken(authHeader);
@@ -60,6 +83,13 @@ export async function GET(request: NextRequest) {
 
 // POST - Crear nuevo ahorro
 export async function POST(request: NextRequest) {
+  if (!hasFirebaseAdminCredentials) {
+    return NextResponse.json(
+      { error: 'Firebase Admin no configurado' },
+      { status: 503 }
+    );
+  }
+
   try {
     const authHeader = request.headers.get('authorization');
     const decoded = await verifyFirebaseToken(authHeader);

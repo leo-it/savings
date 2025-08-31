@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { Expense, getExpensesDirect, updateExpenseDirect } from '@/lib/firebase-firestore-direct';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+
 import Link from 'next/link';
-import { getExpensesDirect, updateExpenseDirect, Expense } from '@/lib/firebase-firestore-direct';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function EditExpense() {
@@ -48,8 +49,8 @@ export default function EditExpense() {
         description: currentExpense.description || '',
         date: new Date(currentExpense.date).toISOString().split('T')[0]
       });
-    } catch (error: any) {
-      setError(`Error cargando gasto: ${error.message}`);
+    } catch (error: unknown) {
+      setError(`Error cargando gasto: ${error instanceof Error ? error.message : 'Desconocido'}`);
     } finally {
       setIsLoading(false);
     }
@@ -86,9 +87,9 @@ export default function EditExpense() {
 
       // Redirigir al dashboard con mensaje de éxito
       router.push('/dashboard?tab=expenses&message=Gasto actualizado exitosamente');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error actualizando gasto:', error);
-      setError(error.message || 'Error al actualizar el gasto');
+      setError(error instanceof Error ? error.message : 'Error al actualizar el gasto');
     } finally {
       setIsSaving(false);
     }

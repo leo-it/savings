@@ -1,10 +1,11 @@
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import {
   User,
-  updateProfile 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
 } from 'firebase/auth';
+
 import { auth } from './firebase';
 
 export interface UserData {
@@ -37,20 +38,24 @@ export async function registerUserDirect(name: string, email: string, password: 
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error en registro directo:', error);
     
     // Manejar errores específicos
-    if (error.code === 'auth/email-already-in-use') {
-      throw new Error('Este email ya está registrado. Por favor, usa un email diferente o inicia sesión.');
-    } else if (error.code === 'auth/weak-password') {
-      throw new Error('La contraseña es demasiado débil. Debe tener al menos 6 caracteres.');
-    } else if (error.code === 'auth/invalid-email') {
-      throw new Error('El formato del email no es válido.');
-    } else if (error.code === 'auth/operation-not-allowed') {
-      throw new Error('El registro por email/contraseña no está habilitado en este proyecto.');
+    if (error instanceof Error) {
+      if (error.message.includes('auth/email-already-in-use')) {
+        throw new Error('Este email ya está registrado. Por favor, usa un email diferente o inicia sesión.');
+      } else if (error.message.includes('auth/weak-password')) {
+        throw new Error('La contraseña es demasiado débil. Debe tener al menos 6 caracteres.');
+      } else if (error.message.includes('auth/invalid-email')) {
+        throw new Error('El formato del email no es válido.');
+      } else if (error.message.includes('auth/operation-not-allowed')) {
+        throw new Error('El registro por email/contraseña no está habilitado en este proyecto.');
+      } else {
+        throw new Error(`Error en el registro: ${error.message}`);
+      }
     } else {
-      throw new Error(`Error en el registro: ${error.message}`);
+      throw new Error('Error desconocido en el registro');
     }
   }
 }
@@ -65,20 +70,24 @@ export async function loginUserDirect(email: string, password: string): Promise<
     
     console.log('✅ Login exitoso:', user.uid);
     return user;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error en login directo:', error);
     
     // Manejar errores específicos
-    if (error.code === 'auth/user-not-found') {
-      throw new Error('Usuario no encontrado. Verifica tu email o regístrate.');
-    } else if (error.code === 'auth/wrong-password') {
-      throw new Error('Contraseña incorrecta.');
-    } else if (error.code === 'auth/invalid-email') {
-      throw new Error('El formato del email no es válido.');
-    } else if (error.code === 'auth/too-many-requests') {
-      throw new Error('Demasiados intentos fallidos. Intenta más tarde.');
+    if (error instanceof Error) {
+      if (error.message.includes('auth/user-not-found')) {
+        throw new Error('Usuario no encontrado. Verifica tu email o regístrate.');
+      } else if (error.message.includes('auth/wrong-password')) {
+        throw new Error('Contraseña incorrecta.');
+      } else if (error.message.includes('auth/invalid-email')) {
+        throw new Error('El formato del email no es válido.');
+      } else if (error.message.includes('auth/too-many-requests')) {
+        throw new Error('Demasiados intentos fallidos. Intenta más tarde.');
+      } else {
+        throw new Error(`Error en el login: ${error.message}`);
+      }
     } else {
-      throw new Error(`Error en el login: ${error.message}`);
+      throw new Error('Error desconocido en el login');
     }
   }
 }
@@ -89,7 +98,7 @@ export async function logoutUserDirect(): Promise<void> {
     console.log('🔥 Cerrando sesión...');
     await signOut(auth);
     console.log('✅ Sesión cerrada exitosamente');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error cerrando sesión:', error);
     throw error;
   }

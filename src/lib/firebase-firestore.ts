@@ -66,8 +66,9 @@ export async function createSaving(savingData: Omit<Saving, 'id' | 'createdAt' |
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
-    throw new Error(`Error creando ahorro: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error creando ahorro: ${errorMessage}`);
   }
 }
 
@@ -87,8 +88,9 @@ export async function getSavings(userId: string): Promise<Saving[]> {
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date()
     })) as Saving[];
-  } catch (error: any) {
-    throw new Error(`Error obteniendo ahorros: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error obteniendo ahorros: ${errorMessage}`);
   }
 }
 
@@ -99,16 +101,18 @@ export async function updateSaving(id: string, updates: Partial<Saving>): Promis
       ...updates,
       updatedAt: serverTimestamp()
     });
-  } catch (error: any) {
-    throw new Error(`Error actualizando ahorro: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error actualizando ahorro: ${errorMessage}`);
   }
 }
 
 export async function deleteSaving(id: string): Promise<void> {
   try {
     await deleteDoc(doc(db, 'savings', id));
-  } catch (error: any) {
-    throw new Error(`Error eliminando ahorro: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error eliminando ahorro: ${errorMessage}`);
   }
 }
 
@@ -127,8 +131,9 @@ export async function createExpense(expenseData: Omit<Expense, 'id' | 'createdAt
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
-    throw new Error(`Error creando gasto: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error creando gasto: ${errorMessage}`);
   }
 }
 
@@ -148,8 +153,9 @@ export async function getExpenses(userId: string): Promise<Expense[]> {
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date()
     })) as Expense[];
-  } catch (error: any) {
-    throw new Error(`Error obteniendo gastos: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error obteniendo gastos: ${errorMessage}`);
   }
 }
 
@@ -160,16 +166,18 @@ export async function updateExpense(id: string, updates: Partial<Expense>): Prom
       ...updates,
       updatedAt: serverTimestamp()
     });
-  } catch (error: any) {
-    throw new Error(`Error actualizando gasto: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error actualizando gasto: ${errorMessage}`);
   }
 }
 
 export async function deleteExpense(id: string): Promise<void> {
   try {
     await deleteDoc(doc(db, 'expenses', id));
-  } catch (error: any) {
-    throw new Error(`Error eliminando gasto: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error eliminando gasto: ${errorMessage}`);
   }
 }
 
@@ -188,8 +196,9 @@ export async function createInvestment(investmentData: Omit<Investment, 'id' | '
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
-    throw new Error(`Error creando inversión: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error creando inversión: ${errorMessage}`);
   }
 }
 
@@ -209,8 +218,9 @@ export async function getInvestments(userId: string): Promise<Investment[]> {
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date()
     })) as Investment[];
-  } catch (error: any) {
-    throw new Error(`Error obteniendo inversiones: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error obteniendo inversiones: ${errorMessage}`);
   }
 }
 
@@ -221,15 +231,17 @@ export async function updateInvestment(id: string, updates: Partial<Investment>)
       ...updates,
       updatedAt: serverTimestamp()
     });
-  } catch (error: any) {
-    throw new Error(`Error actualizando inversión: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error actualizando inversión: ${errorMessage}`);
   }
 }
 
 export async function deleteInvestment(id: string): Promise<void> {
   try {
     await deleteDoc(doc(db, 'investments', id));
-  } catch (error: any) {
-    throw new Error(`Error eliminando inversión: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error(`Error eliminando inversión: ${errorMessage}`);
   }
 } 

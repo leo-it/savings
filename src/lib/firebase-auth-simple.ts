@@ -1,10 +1,11 @@
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import {
   User,
-  updateProfile 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
 } from 'firebase/auth';
+
 import { auth } from './firebase';
 
 export interface UserData {
@@ -32,7 +33,7 @@ export async function registerUserSimple(name: string, email: string, password: 
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error en registro:', error);
     throw error;
   }
@@ -43,7 +44,7 @@ export async function loginUserSimple(email: string, password: string): Promise<
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error en login:', error);
     throw error;
   }
@@ -53,7 +54,7 @@ export async function loginUserSimple(email: string, password: string): Promise<
 export async function logoutUserSimple(): Promise<void> {
   try {
     await signOut(auth);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error en logout:', error);
     throw error;
   }

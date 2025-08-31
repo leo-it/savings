@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { registerUserDirect } from '@/lib/firebase-auth-direct';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -43,33 +43,33 @@ export default function Register() {
       
       // Registro exitoso, redirigir al login
       router.push('/auth/login?message=Registro exitoso! Ahora puedes iniciar sesión.');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ Error completo:', err);
-      console.error('❌ Error code:', err.code);
-      console.error('❌ Error message:', err.message);
-      console.error('❌ Error stack:', err.stack);
+      console.error('❌ Error code:', (err as any).code);
+      console.error('❌ Error message:', (err as any).message);
+      console.error('❌ Error stack:', (err as any).stack);
       
       // Manejar errores específicos de Firebase
       let errorMessage = 'Error en el registro';
       
-      if (err.code === 'auth/email-already-in-use') {
+      if ((err as any).code === 'auth/email-already-in-use') {
         errorMessage = 'El email ya está registrado';
-      } else if (err.code === 'auth/weak-password') {
+      } else if ((err as any).code === 'auth/weak-password') {
         errorMessage = 'La contraseña es demasiado débil';
-      } else if (err.code === 'auth/invalid-email') {
+      } else if ((err as any).code === 'auth/invalid-email') {
         errorMessage = 'El email no es válido';
-      } else if (err.code === 'auth/operation-not-allowed') {
+      } else if ((err as any).code === 'auth/operation-not-allowed') {
         errorMessage = 'El registro por email/contraseña no está habilitado';
-      } else if (err.code === 'auth/network-request-failed') {
+      } else if ((err as any).code === 'auth/network-request-failed') {
         errorMessage = 'Error de conexión. Verifica tu internet';
-      } else if (err.code === 'auth/invalid-api-key') {
+      } else if ((err as any).code === 'auth/invalid-api-key') {
         errorMessage = 'Error de configuración de Firebase';
-      } else if (err.code === 'auth/app-not-authorized') {
+      } else if ((err as any).code === 'auth/app-not-authorized') {
         errorMessage = 'Aplicación no autorizada';
-      } else if (err.code === 'auth/configuration-not-found') {
+      } else if ((err as any).code === 'auth/configuration-not-found') {
         errorMessage = 'Configuración de Firebase no encontrada';
       } else {
-        errorMessage = `Error: ${err.message || err.code || 'Desconocido'}`;
+        errorMessage = `Error: ${(err as any).message || (err as any).code || 'Desconocido'}`;
       }
       
       setError(errorMessage);

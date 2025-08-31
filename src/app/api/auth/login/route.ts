@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { loginUser, getUserData } from '@/lib/firebase-auth';
+import { getUserData, loginUser } from '@/lib/firebase-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,19 +33,22 @@ export async function POST(request: NextRequest) {
       token: await user.getIdToken()
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error en login:', error);
     
     // Manejar errores específicos de Firebase
     let errorMessage = 'Credenciales inválidas';
-    if (error.message.includes('auth/user-not-found')) {
-      errorMessage = 'Usuario no encontrado';
-    } else if (error.message.includes('auth/wrong-password')) {
-      errorMessage = 'Contraseña incorrecta';
-    } else if (error.message.includes('auth/invalid-email')) {
-      errorMessage = 'Email no válido';
-    } else if (error.message.includes('auth/too-many-requests')) {
-      errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
+    
+    if (error instanceof Error) {
+      if (error.message.includes('auth/user-not-found')) {
+        errorMessage = 'Usuario no encontrado';
+      } else if (error.message.includes('auth/wrong-password')) {
+        errorMessage = 'Contraseña incorrecta';
+      } else if (error.message.includes('auth/invalid-email')) {
+        errorMessage = 'Email no válido';
+      } else if (error.message.includes('auth/too-many-requests')) {
+        errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
+      }
     }
 
     return NextResponse.json(

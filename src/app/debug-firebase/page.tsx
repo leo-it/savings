@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { auth } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+
+import { auth } from '@/lib/firebase';
+import { useState } from 'react';
 
 export default function DebugFirebase() {
   const [email, setEmail] = useState('test@example.com');
@@ -58,29 +59,37 @@ export default function DebugFirebase() {
       addLog(`🎉 Usuario completo: ${userCredential.user.uid}`);
       setStatus('✅ Test completado exitosamente');
       
-    } catch (err: any) {
-      addLog(`❌ Error: ${err.message}`);
-      addLog(`🔍 Error code: ${err.code}`);
-      addLog(`📚 Error stack: ${err.stack}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        addLog(`❌ Error: ${err.message}`);
+        setError(err.message);
+      } else {
+        addLog(`❌ Error: ${String(err)}`);
+        setError(String(err));
+      }
       
-      setError(err.message);
+      // Para acceder a propiedades específicas de Firebase Auth, necesitamos hacer type assertion
+      const firebaseError = err as any;
+      addLog(`🔍 Error code: ${firebaseError.code}`);
+      addLog(`📚 Error stack: ${firebaseError.stack}`);
+      
       setStatus('❌ Test falló');
       
       // Análisis detallado del error
-      if (err.code === 'auth/operation-not-allowed') {
+      if (firebaseError.code === 'auth/operation-not-allowed') {
         addLog('💡 SOLUCIÓN CRÍTICA: Habilita "Correo electrónico/contraseña" en Firebase Console');
         addLog('📍 Ve a: Firebase Console > Authentication > Sign-in method');
         addLog('📍 Habilita el toggle para "Correo electrónico/contraseña"');
-      } else if (err.code === 'auth/invalid-api-key') {
+      } else if (firebaseError.code === 'auth/invalid-api-key') {
         addLog('💡 SOLUCIÓN: Verifica tu API key en Firebase Console');
-      } else if (err.code === 'auth/app-not-authorized') {
+      } else if (firebaseError.code === 'auth/app-not-authorized') {
         addLog('💡 SOLUCIÓN: Verifica que tu app esté autorizada');
-      } else if (err.code === 'auth/network-request-failed') {
+      } else if (firebaseError.code === 'auth/network-request-failed') {
         addLog('💡 SOLUCIÓN: Verifica tu conexión a internet');
-      } else if (err.code === 'auth/configuration-not-found') {
+      } else if (firebaseError.code === 'auth/configuration-not-found') {
         addLog('💡 SOLUCIÓN: Firebase Auth no está habilitado en tu proyecto');
         addLog('📍 Ve a: Firebase Console > Authentication > Comenzar');
-      } else if (err.code === 'auth/unauthorized-domain') {
+      } else if (firebaseError.code === 'auth/unauthorized-domain') {
         addLog('💡 SOLUCIÓN: Tu dominio no está autorizado');
         addLog('📍 Ve a: Firebase Console > Authentication > Settings > Authorized domains');
       }

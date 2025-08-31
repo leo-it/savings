@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+
+import Link from 'next/link';
 import { loginUserDirect } from '@/lib/firebase-auth-direct';
 
-export default function Login() {
+function LoginForm() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -45,35 +46,36 @@ export default function Login() {
       // Guardar token y redirigir al dashboard
       localStorage.setItem('token', token);
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ Error completo:', err);
-      console.error('❌ Error code:', err.code);
-      console.error('❌ Error message:', err.message);
-      console.error('❌ Error stack:', err.stack);
       
       // Manejar errores específicos de Firebase
       let errorMessage = 'Credenciales inválidas';
       
-      if (err.code === 'auth/user-not-found') {
-        errorMessage = 'Usuario no encontrado';
-      } else if (err.code === 'auth/wrong-password') {
-        errorMessage = 'Contraseña incorrecta';
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'Email no válido';
-      } else if (err.code === 'auth/too-many-requests') {
-        errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
-      } else if (err.code === 'auth/operation-not-allowed') {
-        errorMessage = 'El login por email/contraseña no está habilitado';
-      } else if (err.code === 'auth/network-request-failed') {
-        errorMessage = 'Error de conexión. Verifica tu internet';
-      } else if (err.code === 'auth/invalid-api-key') {
-        errorMessage = 'Error de configuración de Firebase';
-      } else if (err.code === 'auth/app-not-authorized') {
-        errorMessage = 'Aplicación no autorizada';
-      } else if (err.code === 'auth/configuration-not-found') {
-        errorMessage = 'Configuración de Firebase no encontrada';
-      } else {
-        errorMessage = `Error: ${err.message || err.code || 'Desconocido'}`;
+      if (err && typeof err === 'object' && 'code' in err) {
+        const firebaseError = err as { code?: string; message?: string };
+        
+        if (firebaseError.code === 'auth/user-not-found') {
+          errorMessage = 'Usuario no encontrado';
+        } else if (firebaseError.code === 'auth/wrong-password') {
+          errorMessage = 'Contraseña incorrecta';
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          errorMessage = 'Email no válido';
+        } else if (firebaseError.code === 'auth/too-many-requests') {
+          errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
+        } else if (firebaseError.code === 'auth/operation-not-allowed') {
+          errorMessage = 'El login por email/contraseña no está habilitado';
+        } else if (firebaseError.code === 'auth/network-request-failed') {
+          errorMessage = 'Error de conexión. Verifica tu internet';
+        } else if (firebaseError.code === 'auth/invalid-api-key') {
+          errorMessage = 'Error de configuración de Firebase';
+        } else if (firebaseError.code === 'auth/app-not-authorized') {
+          errorMessage = 'Aplicación no autorizada';
+        } else if (firebaseError.code === 'auth/configuration-not-found') {
+          errorMessage = 'Configuración de Firebase no encontrada';
+        } else {
+          errorMessage = `Error: ${firebaseError.message || firebaseError.code || 'Desconocido'}`;
+        }
       }
       
       setError(errorMessage);
@@ -178,5 +180,20 @@ export default function Login() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">💰</div>
+          <div className="text-lg text-gray-600">Cargando...</div>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 } 

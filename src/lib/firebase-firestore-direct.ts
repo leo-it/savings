@@ -1,15 +1,16 @@
-import { 
-  collection, 
-  doc, 
-  addDoc, 
-  getDocs, 
-  query, 
-  where, 
-  orderBy, 
-  updateDoc, 
+import {
+  addDoc,
+  collection,
   deleteDoc,
-  serverTimestamp 
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where
 } from 'firebase/firestore';
+
 import { db } from './firebase';
 import { getCurrentUser } from './firebase-auth-direct';
 
@@ -77,9 +78,9 @@ export async function createSavingDirect(savingData: Omit<Saving, 'id' | 'create
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error creando ahorro:', error);
-    throw new Error(`Error creando ahorro: ${error.message}`);
+    throw new Error(`Error creando ahorro: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -112,9 +113,9 @@ export async function getSavingsDirect(): Promise<Saving[]> {
 
     console.log(`✅ ${savings.length} ahorros obtenidos`);
     return savings;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error obteniendo ahorros:', error);
-    throw new Error(`Error obteniendo ahorros: ${error.message}`);
+    throw new Error(`Error obteniendo ahorros: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -143,9 +144,9 @@ export async function createExpenseDirect(expenseData: Omit<Expense, 'id' | 'cre
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error creando gasto:', error);
-    throw new Error(`Error creando gasto: ${error.message}`);
+    throw new Error(`Error creando gasto: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -178,9 +179,9 @@ export async function getExpensesDirect(): Promise<Expense[]> {
 
     console.log(`✅ ${expenses.length} gastos obtenidos`);
     return expenses;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error obteniendo gastos:', error);
-    throw new Error(`Error obteniendo gastos: ${error.message}`);
+    throw new Error(`Error obteniendo gastos: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -209,9 +210,9 @@ export async function createInvestmentDirect(investmentData: Omit<Investment, 'i
       createdAt: new Date(),
       updatedAt: new Date()
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error creando inversión:', error);
-    throw new Error(`Error creando inversión: ${error.message}`);
+    throw new Error(`Error creando inversión: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -244,9 +245,9 @@ export async function getInvestmentsDirect(): Promise<Investment[]> {
 
     console.log(`✅ ${investments.length} inversiones obtenidas`);
     return investments;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error obteniendo inversiones:', error);
-    throw new Error(`Error obteniendo inversiones: ${error.message}`);
+    throw new Error(`Error obteniendo inversiones: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 } 
 
@@ -267,9 +268,9 @@ export async function updateSavingDirect(savingId: string, savingData: Partial<S
     });
 
     console.log('✅ Ahorro actualizado exitosamente');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error actualizando ahorro:', error);
-    throw new Error(`Error actualizando ahorro: ${error.message}`);
+    throw new Error(`Error actualizando ahorro: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -286,9 +287,9 @@ export async function deleteSavingDirect(savingId: string): Promise<void> {
     await deleteDoc(savingRef);
 
     console.log('✅ Ahorro eliminado exitosamente');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error eliminando ahorro:', error);
-    throw new Error(`Error eliminando ahorro: ${error.message}`);
+    throw new Error(`Error eliminando ahorro: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -309,9 +310,9 @@ export async function updateExpenseDirect(expenseId: string, expenseData: Partia
     });
 
     console.log('✅ Gasto actualizado exitosamente');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error actualizando gasto:', error);
-    throw new Error(`Error actualizando gasto: ${error.message}`);
+    throw new Error(`Error actualizando gasto: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -328,9 +329,9 @@ export async function deleteExpenseDirect(expenseId: string): Promise<void> {
     await deleteDoc(expenseRef);
 
     console.log('✅ Gasto eliminado exitosamente');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error eliminando gasto:', error);
-    throw new Error(`Error eliminando gasto: ${error.message}`);
+    throw new Error(`Error eliminando gasto: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -351,9 +352,9 @@ export async function updateInvestmentDirect(investmentId: string, investmentDat
     });
 
     console.log('✅ Inversión actualizada exitosamente');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error actualizando inversión:', error);
-    throw new Error(`Error actualizando inversión: ${error.message}`);
+    throw new Error(`Error actualizando inversión: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -370,8 +371,8 @@ export async function deleteInvestmentDirect(investmentId: string): Promise<void
     await deleteDoc(investmentRef);
 
     console.log('✅ Inversión eliminada exitosamente');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error eliminando inversión:', error);
-    throw new Error(`Error eliminando inversión: ${error.message}`);
+    throw new Error(`Error eliminando inversión: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 } 

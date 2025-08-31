@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import { auth } from '@/lib/firebase';
 
 export default function TestFirebase() {
@@ -35,8 +36,12 @@ export default function TestFirebase() {
         throw new Error('No se pudo obtener la configuración de la app');
       }
 
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(String(err));
+      }
       setStatus('Error en la configuración ❌');
       console.error('Error en test Firebase:', err);
     }
